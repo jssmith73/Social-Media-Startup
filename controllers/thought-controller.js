@@ -1,7 +1,9 @@
 const { Thought, User } = require('../models');
 
 module.exports = {
-  async getthoughts(req, res) {
+
+  //Get all thought
+  async getThoughts(req, res) {
     try {
       const thoughts = await Thought.find();
       res.json(thoughts);
@@ -9,7 +11,9 @@ module.exports = {
       res.status(500).json(err);
     }
   },
-  async getSinglethought(req, res) {
+
+  //Get one thought
+  async getSingleThought(req, res) {
     try {
       const thought = await Thought.findOne({ _id: req.params.thoughtId })
 
@@ -23,7 +27,7 @@ module.exports = {
     }
   },
   // create a new thought
-  async createthought(req, res) {
+  async createThought(req, res) {
     try {
       const thought = await Thought.create(req.body);
       const user = await User.findOneAndUpdate(
@@ -44,7 +48,9 @@ module.exports = {
       res.status(500).json(err);
     }
   },
-  async updatethought(req, res) {
+
+  //Update thought
+  async updateThought(req, res) {
     try {
       const thought = await Thought.findOneAndUpdate(
         { _id: req.params.thoughtId },
@@ -62,7 +68,9 @@ module.exports = {
       res.status(500).json(err);
     }
   },
-  async deletethought(req, res) {
+
+  //Delete thought
+  async deleteThought(req, res) {
     try {
       const thought = await Thought.findOneAndRemove({ _id: req.params.thoughtId });
 
@@ -87,8 +95,27 @@ module.exports = {
       res.status(500).json(err);
     }
   },
+  // Add a friend
+  async addFriend(req, res) {
+    try {
+      const user = await User.findOneAndUpdate(
+        { _id: req.params.userId },
+        { $addToSet: { friends: req.body } },
+        { runValidators: true, new: true }
+      );
+
+      if (!user) {
+        return res.status(404).json({ message: 'No User with this id!' });
+      }
+
+      res.json(user);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
+
   // Add a thought response
-  async addthoughtResponse(req, res) {
+  async addThoughtResponse(req, res) {
     try {
       const thought = await Thought.findOneAndUpdate(
         { _id: req.params.thoughtId },
@@ -106,7 +133,7 @@ module.exports = {
     }
   },
   // Remove thought response
-  async removethoughtResponse(req, res) {
+  async removeThoughtResponse(req, res) {
     try {
       const thought = await Thought.findOneAndUpdate(
         { _id: req.params.thoughtId },

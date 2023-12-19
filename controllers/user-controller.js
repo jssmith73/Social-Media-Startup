@@ -72,6 +72,8 @@ async getSingleUser(req, res) {
       res.status(500).json(err);
     }
   },
+
+  //Delete user
   async deleteUser(req, res) {
     try {
       const user = await User.findOneAndRemove({ _id: req.params.userId });
@@ -109,7 +111,7 @@ async getSingleUser(req, res) {
       res.status(500).json(err);
     }
   },
-  // Remove User response
+  // Remove friend
   async removeFriend(req, res) {
     try {
       const user = await User.findOneAndUpdate(
