@@ -1,34 +1,27 @@
-const { ObjectId } = require('mongoose').Types;
 const { User, Post } = require('../models');
-
-const headCount = async () => {
-    // Your code here
-    const numberOfUsers = await User.aggregate();
-    return numberOfUsers;
-}
 
 module.exports = {
 
-//GET all users
+  //GET all users
 
-async getUsers(req, res) {
-        try {
-            const users = await User.find();
-            const userObj = {
-                users,
-                headCount: await headCount(),
-            };
-            return res.json(userObj);
-        } catch (err) {
-            console.log(err);
-            return res.status(500).json(err);
-        }
-    },
-
-// Get a single User
-async getSingleUser(req, res) {
+  async getUsers(req, res) {
     try {
-      const user = await User.findOne({ _id: req.params.userId })
+      const users = await User.find().populate('friends').populate('thoughts');
+      const userObj = {
+        users,
+        headCount: users.length,
+      };
+      return res.json(userObj);
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json(err);
+    }
+  },
+
+  // Get a single User
+  async getSingleUser(req, res) {
+    try {
+      const user = await User.findOne({ _id: req.params.userId }).populate('friends').populate('thoughts')
         .select('-__v')
         .lean();
 
@@ -47,8 +40,8 @@ async getSingleUser(req, res) {
   // CREATE a new user
   async createUser(req, res) {
     try {
-      const User = await User.create(req.body);
-      res.json(User);
+      const user = await User.create(req.body);
+      res.json({message: 'User created!'});
     } catch (err) {
       res.status(500).json(err);
     }
@@ -66,7 +59,7 @@ async getSingleUser(req, res) {
         return res.status(404).json({ message: 'No User with this id!' });
       }
 
-      res.json(User);
+      res.json(user);
     } catch (err) {
       console.log(err);
       res.status(500).json(err);
@@ -114,7 +107,7 @@ async getSingleUser(req, res) {
   // Remove friend
   async removeFriend(req, res) {
     try {
-      const user = await User.findOneAndUpdate(
+      const user = await User.findOneAndDelete(
         { _id: req.params.userId },
         { $pull: { friends: req.params.friendId } },
         { runValidators: true, new: true }

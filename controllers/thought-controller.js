@@ -79,7 +79,7 @@ module.exports = {
       }
 
       const user = await User.findOneAndUpdate(
-        { _id: req.body.userId },
+        { thoughts: req.params.thoughtId },
         { $pull: { thoughts: req.params.thoughtId } },
         { new: true }
       );
@@ -95,27 +95,8 @@ module.exports = {
       res.status(500).json(err);
     }
   },
-  // Add a friend
-  async addFriend(req, res) {
-    try {
-      const user = await User.findOneAndUpdate(
-        { _id: req.params.userId },
-        { $addToSet: { friends: req.body } },
-        { runValidators: true, new: true }
-      );
-
-      if (!user) {
-        return res.status(404).json({ message: 'No User with this id!' });
-      }
-
-      res.json(user);
-    } catch (err) {
-      res.status(500).json(err);
-    }
-  },
-
-  // Add a thought response
-  async addThoughtResponse(req, res) {
+  // Add a reaction
+  async addReaction(req, res) {
     try {
       const thought = await Thought.findOneAndUpdate(
         { _id: req.params.thoughtId },
@@ -132,12 +113,12 @@ module.exports = {
       res.status(500).json(err);
     }
   },
-  // Remove thought response
-  async removeThoughtResponse(req, res) {
+  // Remove reaction
+  async removeReaction(req, res) {
     try {
-      const thought = await Thought.findOneAndUpdate(
+      const thought = await Thought.findOneAndDelete(
         { _id: req.params.thoughtId },
-        { $pull: { reactions: { responseId: req.params.responseId } } },
+        { $pull: { reactions: { reactionId: req.params.reactionId } } },
         { runValidators: true, new: true }
       )
 
