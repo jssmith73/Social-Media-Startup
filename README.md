@@ -23,6 +23,8 @@
 
     A full tutorial can be viewed by the following link:
 
+    https://drive.google.com/file/d/1GTQ73Eqtlxo4zT2tFrsDKX_LHfYipsGg/view
+
 ## License:
 
     MIT License: https://opensource.org/licenses/MIT
